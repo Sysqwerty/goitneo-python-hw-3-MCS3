@@ -31,6 +31,7 @@ class AddressBook(UserDict):
     def get_birthdays_per_week(self):
         users_dictionary_per_weekday = defaultdict(list)
         current_date = datetime.today().date()
+        celebrate_dict = dict()
 
         for user, record in self.data.items():
             if record.birthday:
@@ -56,11 +57,15 @@ class AddressBook(UserDict):
                         user)
 
         # Прінтує людей з Днем Нарождення на наступний тиждень, починаючи з понеділка
+        # for day in WEEK_DAY_DICT.values():
+        #     celebrate_users = ", ".join(users_dictionary_per_weekday[day])
+        #     print(f"{day}: {celebrate_users}")
+
         for day in WEEK_DAY_DICT.values():
             celebrate_users = ", ".join(users_dictionary_per_weekday[day])
-            print(f"{day}: {celebrate_users}")
+            celebrate_dict[f"{day}"] = celebrate_users
 
-        return dict(users_dictionary_per_weekday)
+        return celebrate_dict
 
 
 if __name__ == '__main__':
@@ -80,7 +85,7 @@ if __name__ == '__main__':
     # Створення та додавання нового запису для Jane
     jane_record = Record("Jane")
     jane_record.add_phone("9876543210")
-    jane_record.add_birthday("24.10.1984")
+    jane_record.add_birthday("22.10.1984")
     book.add_record(jane_record)
 
     # Створення та додавання нового запису для Simon
