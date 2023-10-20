@@ -11,8 +11,11 @@ class Record:
         self.phones = []
         self.birthday = None
 
-    def add_phone(self, phone):
-        self.phone = Phone(phone)
+    def add_phone(self, contact_phone):
+        if contact_phone in self.phones:
+            raise Exception(f"Contactalready have phone record '{
+                            contact_phone}'")
+        self.phone = Phone(contact_phone)
         self.phones.append(self.phone)
 
     def remove_phone(self, phone):
@@ -32,10 +35,19 @@ class Record:
         for p in self.phones:
             if p.value == phone:
                 return phone
+            
+    def get_phones(self):
+        return [p.value for p in self.phones]
 
     def add_birthday(self, birthday: str):
         if re.match(r'\d{2}\.\d{2}\.\d{4}', birthday):
             self.birthday = Birthday(birthday)
+        else:
+            raise ValueError(
+                f"'{birthday}' doesn't match the birthday format DD.MM.YYYY")
+    
+    def show_birthday(self):
+        return self.birthday.value
 
     def __str__(self):
         if self.birthday:

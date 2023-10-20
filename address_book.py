@@ -22,13 +22,13 @@ class AddressBook(UserDict):
     def add_record(self, record):
         self.data[record.name.value] = record
 
-    def find(self, name):
+    def find(self, name) -> Record | None:
         return self.get(name)
 
     def delete(self, name):
         self.__delitem__(name)
 
-    def get_birthdays_per_week(self):
+    def get_birthdays_per_week(self) -> dict:
         users_dictionary_per_weekday = defaultdict(list)
         current_date = datetime.today().date()
         celebrate_dict = dict()
@@ -105,6 +105,11 @@ if __name__ == '__main__':
     # Пошук конкретного телефону у записі John
     found_phone = john.find_phone("5555555555")
     # print(f"{john.name}: {found_phone}")  # Виведення: 5555555555
+
+    # Пошук всіх телефонів у записі John
+    found_phones = john.get_phones()
+    # print(found_phones)
+    # ['1112223333', '5555555555']
 
     # Видалення запису Jane
     # book.delete("Jane")
