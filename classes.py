@@ -184,26 +184,22 @@ if __name__ == '__main__':
 
     print('-' * 10)
 
-    # # Пошук всіх телефонів у записі John
+    # Пошук всіх телефонів у записі John
     found_phones = john.get_phones()
-    print(found_phones)
-    # ['1112223333', '5555555555']
+    print(found_phones) # ['1112223333', '5555555555']
 
     # # Видалення запису Jane
-    # # book.delete("Jane")
+    # # book.delete(Name("Jane"))
 
-    # # Виведення всіх записів у книзі
-    # # for name, record in book.data.items():
-    # #     print(record)
 
     # # Видалення телефону "5555555555" із запису John
     john_record.remove_phone(Phone("5555555555"))
 
     print('-' * 10)
 
-    # # Виведення всіх записів у книзі
+    # Виведення всіх записів у книзі
     for name, record in book.data.items():
         print(record)
 
-    # # Виведення днів нарождення на наступний тиждень
+    # Виведення днів нарождення на наступний тиждень
     print(book.get_birthdays_per_week())
