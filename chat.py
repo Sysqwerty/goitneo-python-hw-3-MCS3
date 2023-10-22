@@ -177,8 +177,6 @@ def birthdays():
     get_birthdays_per_week = book.get_birthdays_per_week()
 
     if get_birthdays_per_week:
-        # celebrates = {k:v for }
-
         result = "Next week birthdays:\n" + "-" * 10 + "\n"
         result += "\n".join([f"{day}: {celebrate_users}" for day,
                              celebrate_users in get_birthdays_per_week.items()])

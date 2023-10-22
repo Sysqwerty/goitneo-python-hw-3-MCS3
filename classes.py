@@ -24,8 +24,7 @@ class Field:
 
 
 class Name(Field):
-    # def __init__(self, name):
-        # super().__init__(name)
+    # uses parent constructor by default
     pass
 
 
@@ -44,7 +43,7 @@ class Birthday(Field):
                 f"'{birthday}' doesn't match the birthday format DD.MM.YYYY")
         birthday = datetime.strptime(birthday, '%d.%m.%Y').date()
         super().__init__(birthday)
-    
+
     def __str__(self):
         return datetime.strftime(self.value, '%d.%m.%Y')
 
@@ -133,11 +132,6 @@ class AddressBook(UserDict):
                     users_dictionary_per_weekday[WEEK_DAY_DICT[week_day]].append(
                         user)
 
-        # Прінтує людей з Днем Нарождення на наступний тиждень, починаючи з понеділка
-        # for day in WEEK_DAY_DICT.values():
-        #     celebrate_users = ", ".join(users_dictionary_per_weekday[day])
-        #     print(f"{day}: {celebrate_users}")
-
         if users_dictionary_per_weekday:
             for day in WEEK_DAY_DICT.values():
                 celebrate_users = ", ".join(users_dictionary_per_weekday[day])
@@ -192,11 +186,10 @@ if __name__ == '__main__':
 
     # Пошук всіх телефонів у записі John
     found_phones = john.get_phones()
-    print(found_phones) # ['1112223333', '5555555555']
+    print(found_phones)  # ['1112223333', '5555555555']
 
     # # Видалення запису Jane
     # # book.delete(Name("Jane"))
-
 
     # # Видалення телефону "5555555555" із запису John
     john_record.remove_phone(Phone("5555555555"))
