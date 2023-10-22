@@ -22,14 +22,20 @@ commands: dict = {
 def help():
     sorted_commands = dict(sorted(commands.items(), key=lambda item: item[0]))
     formatted_commands = ""
+
     for key, value in sorted_commands.items():
         formatted_commands += f">>> {key: <40}: {value: <}\n"
+
     return formatted_commands
 
 
 def parse_input(user_input: str):
-    cmd, *args = user_input.split()
-    cmd = cmd.strip().lower()
+    try:
+        cmd, *args = user_input.split()
+        cmd = cmd.strip().lower()
+    except:
+        return "help", ""
+
     return cmd, *args
 
 
@@ -37,9 +43,10 @@ def parse_input(user_input: str):
 def add_contact(args: list[str, str]):
     try:
         name, phone = args
+        name = Name(name.capitalize())
     except:
         raise CommandError
-    name = Name(name.capitalize())
+
     try:
         phone = Phone(phone)
     except:
@@ -47,6 +54,7 @@ def add_contact(args: list[str, str]):
 
     if book.find(name):
         contact = book.find(name)
+
         if not phone.value in contact.get_phones():
             record: Record = contact.add_phone(phone)
         else:
@@ -65,6 +73,7 @@ def delete_contact(args):
         name = Name(args[0].capitalize())
     except:
         raise CommandError
+
     if (book.find(name)):
         book.delete(name)
     else:
@@ -78,9 +87,9 @@ def delete_contact(args):
 def change_contact(args: list[str, str, str]):
     try:
         name, old_phone, new_phone = args
+        name = Name(name.capitalize())
     except:
         raise CommandError
-    name = Name(name.capitalize())
     try:
         old_phone = Phone(old_phone)
         new_phone = Phone(new_phone)
@@ -140,18 +149,18 @@ def show_birthday(args):
         name = Name(name.capitalize())
     except:
         raise CommandError
-    
+
     if book.find(name):
         record: Record = book.find(name)
     else:
         raise ContactNotFoundError
-    
+
     if record.birthday:
         birthday = record.show_birthday()
     else:
-
         raise ValueError
-    return f"{name} birthday: {birthday.strftime("%d.%m.%Y")}"
+
+    return f"{name} birthday: {birthday}"
 
 
 def show_all():
@@ -168,10 +177,10 @@ def birthdays():
     get_birthdays_per_week = book.get_birthdays_per_week()
 
     if get_birthdays_per_week:
-        print("\n".join([f"{day}: {', '.join(celebrate_users)}" for day,
-                         celebrate_users in get_birthdays_per_week.items() if celebrate_users]))
+        return "\n".join([f"{day}: {", ".join(celebrate_users)}" for day,
+                          celebrate_users in get_birthdays_per_week.items()])
     else:
-        return "There is noone to celebrate birthday next week"
+        return "There is no one to celebrate birthday next week"
 
 
 def main():
@@ -210,7 +219,7 @@ def main():
             case "show-birthday":
                 print(show_birthday(args))
             case "birthdays":
-                birthdays()
+                print(birthdays())
             case "close" | "exit":
                 print("Good bye!")
                 break

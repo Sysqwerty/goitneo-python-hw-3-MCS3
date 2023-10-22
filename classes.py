@@ -44,6 +44,9 @@ class Birthday(Field):
                 f"'{birthday}' doesn't match the birthday format DD.MM.YYYY")
         birthday = datetime.strptime(birthday, '%d.%m.%Y').date()
         super().__init__(birthday)
+    
+    def __str__(self):
+        return datetime.strftime(self.value, '%d.%m.%Y')
 
 
 class Record:
@@ -135,9 +138,12 @@ class AddressBook(UserDict):
         #     celebrate_users = ", ".join(users_dictionary_per_weekday[day])
         #     print(f"{day}: {celebrate_users}")
 
-        for day in WEEK_DAY_DICT.values():
-            celebrate_users = ", ".join(users_dictionary_per_weekday[day])
-            celebrate_dict[f"{day}"] = celebrate_users
+        if users_dictionary_per_weekday:
+            for day in WEEK_DAY_DICT.values():
+                celebrate_users = ", ".join(users_dictionary_per_weekday[day])
+                celebrate_dict[f"{day}"] = celebrate_users
+        else:
+            return None
 
         return celebrate_dict
 
