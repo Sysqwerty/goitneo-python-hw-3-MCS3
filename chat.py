@@ -1,13 +1,5 @@
-from address_book import AddressBook
-from record import Record
-
-
-class ContactNotFoundError(Exception):
-    pass
-
-
-class ContactAlreadyExistsError(Exception):
-    pass
+from classes import Name, Phone, Birthday, Record, AddressBook
+from error_handlers import add_contact_error, delete_contact_error, change_contact_error, show_phones_error, contact_not_found_error, add_birthday_error, show_birthday_error, CommandError, ContactAlreadyExistsError, ContactNotFoundError
 
 
 book: AddressBook
@@ -21,52 +13,10 @@ commands: dict = {
     "phone [user]": "shows exist contact's phone numbers",
     "all": "shows all exist contacts from Address Book",
     "add-birthday [user] [birthday]": "adds birthday to a contact in format [DD.MM.YYYY]",
-    "show-birthday [user]": "shows user's birthday",
+    "show-birthday [user]": "shows user's birthday date",
     "birthdays": "shows birthdays on next week",
     "exit": "enter 'close' or 'exit' to close the assistant",
 }
-
-
-def add_contact_error(func):
-    def inner(*args):
-        try:
-            return func(*args)
-        except ValueError:
-            return "Please use format: add [name] [phone]"
-
-    return inner
-
-
-def delete_contact_error(func):
-    def inner(contact_name):
-        try:
-            return func(contact_name)
-        except ValueError:
-            return "Please use format: delete [name]"
-
-    return inner
-
-
-def change_contact_error(func):
-    def inner(*args, **kwargs):
-        try:
-            return func(*args)
-        except ValueError:
-            return "Please use format: change [name] [phone]"
-        except ContactNotFoundError:
-            return f"Contact wasn't found"
-
-    return inner
-
-
-def show_phones_error(func):
-    def inner(*args):
-        try:
-            return func(*args)
-        except ContactNotFoundError:
-            return f"User wasn't found"
-
-    return inner
 
 
 def help():
@@ -85,96 +35,138 @@ def parse_input(user_input: str):
 
 @add_contact_error
 def add_contact(args: list[str, str]):
-    contact_name, contact_phone = args
-    contact_name = contact_name.capitalize()
-    if (book.find(contact_name)):
-        record = book.find(contact_name)
-    else:
-        record: Record = Record(contact_name)
-
-    record.add_phone(contact_phone)
-    book.add_record(record)
-
-    return f"Contact added: {contact_name} {contact_phone}"
-
-
-@delete_contact_error
-def delete_contact(contact_name):
     try:
-        contact_name = contact_name[0].capitalize()
+        name, phone = args
     except:
-        return "Please use format: delete [name]"
-    if (book.find(contact_name)):
-        book.delete(contact_name)
+        raise CommandError
+    name = Name(name.capitalize())
+    try:
+        phone = Phone(phone)
+    except:
+        raise ValueError
+
+    if book.find(name):
+        contact = book.find(name)
+        if not phone.value in contact.get_phones():
+            record: Record = contact.add_phone(phone)
+        else:
+            raise ContactAlreadyExistsError
     else:
-        return (f"Contact '{contact_name}' wasn't found")
-    return f"Contact deleted: {contact_name}"
+        record: Record = Record(name, phone)
+        book.add_record(record)
+
+    return f"Contact added successfully: {name} {phone}"
 
 
+@contact_not_found_error
+@delete_contact_error
+def delete_contact(args):
+    try:
+        name = Name(args[0].capitalize())
+    except:
+        raise CommandError
+    if (book.find(name)):
+        book.delete(name)
+    else:
+        raise ContactNotFoundError
+
+    return f"Contact '{name}' deleted successfully"
+
+
+@contact_not_found_error
 @change_contact_error
 def change_contact(args: list[str, str, str]):
-    contact_name, old_phone, new_phone = args
-    contact_name = contact_name.capitalize()
-    if book.find(contact_name):
-        record: Record = book.find(contact_name)
-        record.edit_phone(old_phone, new_phone)
+    try:
+        name, old_phone, new_phone = args
+    except:
+        raise CommandError
+    name = Name(name.capitalize())
+    try:
+        old_phone = Phone(old_phone)
+        new_phone = Phone(new_phone)
+    except:
+        raise ValueError
 
-        return f"Contact updated: '{contact_name} {new_phone}'."
+    if book.find(name):
+        record: Record = book.find(name)
+        record.edit_phone(old_phone, new_phone)
+        return f"Contact '{name}' updated successfully"
     else:
         raise ContactNotFoundError
 
 
+@contact_not_found_error
 @show_phones_error
 def show_phones(args):
     try:
-        contact_name = args[0].capitalize()
+        name = Name(args[0].capitalize())
     except:
-        return "Please use format: phone [name]"
+        raise CommandError
 
-    if book.find(contact_name):
-        return book.find(contact_name).get_phones
+    if book.find(name):
+        return f"{name.value}: {", ".join(book.find(name).get_phones())}"
     else:
         raise ContactNotFoundError
 
 
-def show_all():
-    for name, record in book.data.items():
-        return record
-
-
+@contact_not_found_error
+@add_birthday_error
 def add_birthday(args):
     try:
-        contact_name, birthday = args
-        contact_name = contact_name.capitalize()
+        name, birthday = args
+        name = Name(name.capitalize())
     except:
-        return "Please use format: add-birthday [user] [DD.MM.YYYY]"
-    if book.find(contact_name):
-        record: Record | None = book.find(contact_name)
+        raise CommandError
+
+    try:
+        birthday = Birthday(birthday)
+    except:
+        raise ValueError
+
+    if book.find(name):
+        record: Record = book.find(name)
+        record.add_birthday(birthday)
     else:
-        return f"Contact wasn't found"
-    record.add_birthday(birthday)
-    return "Birthday added"
+        raise ContactNotFoundError
+
+    return "Birthday added successfully"
 
 
+@contact_not_found_error
+@show_birthday_error
 def show_birthday(args):
     try:
-        contact_name = args[0]
-        contact_name = contact_name.capitalize()
+        name = args[0]
+        name = Name(name.capitalize())
     except:
-        return "Please use format: show-birthday [user]"
-    if book.find(contact_name):
-        record: Record | None = book.find(contact_name)
+        raise CommandError
+    
+    if book.find(name):
+        record: Record = book.find(name)
     else:
-        return f"Contact wasn't found"
-    if record.show_birthday():
+        raise ContactNotFoundError
+    
+    if record.birthday:
         birthday = record.show_birthday()
     else:
-        return f"Contact {contact_name} have no set birthday yet"
-    return f"Contact {contact_name} birthday: {birthday}"
+
+        raise ValueError
+    return f"{name} birthday: {birthday.strftime("%d.%m.%Y")}"
+
+
+def show_all():
+    if book.data:
+        result = list()
+        for record in book.data.values():
+            result.append(str(record))
+        return "\n".join(result)
+    else:
+        return "No contacts have been added yet"
 
 
 def birthdays():
     get_birthdays_per_week = book.get_birthdays_per_week()
+
     if get_birthdays_per_week:
         print("\n".join([f"{day}: {', '.join(celebrate_users)}" for day,
                          celebrate_users in get_birthdays_per_week.items() if celebrate_users]))
@@ -219,8 +211,11 @@ def main():
                 print(show_birthday(args))
             case "birthdays":
                 birthdays()
+            case "close" | "exit":
+                print("Good bye!")
+                break
             case _:
-                print("Invalid command.")
+                print("Invalid command. Please try again")
 
 
 if __name__ == "__main__":
