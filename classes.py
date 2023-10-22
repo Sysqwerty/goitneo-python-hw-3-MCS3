@@ -6,7 +6,7 @@ from typing import Dict
 
 WEEK_DAY_DICT = {
     0: "Monday",
-    1: "Tusday",
+    1: "Tuesday",
     2: "Wednesday",
     3: "Thursday",
     4: "Friday",
@@ -91,9 +91,9 @@ class Record:
 
     def __str__(self):
         if self.birthday:
-            return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}, birthday: {datetime.strftime(self.birthday.value, '%d.%m.%Y')}"
+            return f"Name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}, birthday: {datetime.strftime(self.birthday.value, '%d.%m.%Y')}"
         else:
-            return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
+            return f"Name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
 
 
 class AddressBook(UserDict):

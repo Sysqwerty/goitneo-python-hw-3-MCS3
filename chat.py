@@ -113,7 +113,7 @@ def show_phones(args):
         raise CommandError
 
     if book.find(name):
-        return f"{name.value}: {", ".join(book.find(name).get_phones())}"
+        return f"{name.value}: {', '.join(book.find(name).get_phones())}"
     else:
         raise ContactNotFoundError
 
@@ -177,8 +177,13 @@ def birthdays():
     get_birthdays_per_week = book.get_birthdays_per_week()
 
     if get_birthdays_per_week:
-        return "\n".join([f"{day}: {", ".join(celebrate_users)}" for day,
-                          celebrate_users in get_birthdays_per_week.items()])
+        # celebrates = {k:v for }
+
+        result = "Next week birthdays:\n" + "-" * 10 + "\n"
+        result += "\n".join([f"{day}: {celebrate_users}" for day,
+                             celebrate_users in get_birthdays_per_week.items()])
+        result += "\n" + "-" * 10
+        return result
     else:
         return "There is no one to celebrate birthday next week"
 
@@ -187,7 +192,7 @@ def main():
     """
     Assistanse bot helps to collect and manage user contacts.
 
-    To see available commands use 'help' command
+    To see available commands enter 'help' command
     """
     print("Welcome to the assistant bot!\nEnter a command or 'help' to see available commands.")
 
