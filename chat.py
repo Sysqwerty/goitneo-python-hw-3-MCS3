@@ -1,19 +1,20 @@
 from classes import Name, Phone, Birthday, Record, AddressBook
 from error_handlers import add_contact_error, delete_contact_error, change_contact_error, show_phones_error, contact_not_found_error, add_birthday_error, show_birthday_error, CommandError, ContactAlreadyExistsError, ContactNotFoundError
-
+import os.path
 
 book: AddressBook
+FILE_PATH = "contacts.json"
 
 commands: dict = {
     "help": "shows available commands",
     "hello": "prints 'How can I help you?'",
-    "add [user] [phone]": "adds new contact (phone is 10-digits)",
-    "delete [user]": "deletes contact from the Address Book",
-    "change [user] [old_phone] [new_phone]": "changes exist contact phone number",
-    "phone [user]": "shows exist contact's phone numbers",
-    "all": "shows all exist contacts from Address Book",
-    "add-birthday [user] [birthday]": "adds birthday to a contact in format [DD.MM.YYYY]",
-    "show-birthday [user]": "shows user's birthday date",
+    "add {user} {phone}": "adds a contact with phone",
+    "delete {user}": "deletes contact",
+    "change {user} {old_phone} {new_phone}": "changes exist contact's phone number",
+    "phone {user}": "shows exist contact's phone numbers",
+    "all": "shows all exist contacts",
+    "add-birthday {user} {birthday}": "adds birthday to a contact in format [DD.MM.YYYY]",
+    "show-birthday {user}": "shows contact's birthday date",
     "birthdays": "shows birthdays on next week",
     "exit": "enter 'close' or 'exit' to close the assistant",
 }
@@ -63,6 +64,7 @@ def add_contact(args: list[str, str]):
         record: Record = Record(name, phone)
         book.add_record(record)
 
+    book.save_contacts(FILE_PATH)
     return f"Contact added successfully: {name} {phone}"
 
 
@@ -79,6 +81,7 @@ def delete_contact(args):
     else:
         raise ContactNotFoundError
 
+    book.save_contacts(FILE_PATH)
     return f"Contact '{name}' deleted successfully"
 
 
@@ -99,6 +102,7 @@ def change_contact(args: list[str, str, str]):
     if book.find(name):
         record: Record = book.find(name)
         record.edit_phone(old_phone, new_phone)
+        book.save_contacts(FILE_PATH)
         return f"Contact '{name}' updated successfully"
     else:
         raise ContactNotFoundError
@@ -138,6 +142,7 @@ def add_birthday(args):
     else:
         raise ContactNotFoundError
 
+    book.save_contacts(FILE_PATH)
     return "Birthday added successfully"
 
 
@@ -192,11 +197,16 @@ def main():
 
     To see available commands enter 'help' command
     """
-    print("Welcome to the assistant bot!\nEnter a command or 'help' to see available commands.")
-
     global book
-    # стровення нової адресної книги (TODO: додати read fromm file)
+    # create a new address book or load daya from a file
     book = AddressBook()
+    if os.path.exists(FILE_PATH):
+        book.load_contacts(FILE_PATH)
+        print(f"Contacts were loaded from '{FILE_PATH}' file")
+    else:
+        print("New address book was created")
+
+    print("Welcome to the assistant bot!\nEnter a command or 'help' to see available commands.")
 
     while True:
         user_input: str = input("Enter a command: ")

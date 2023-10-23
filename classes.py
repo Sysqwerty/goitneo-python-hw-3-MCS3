@@ -2,7 +2,10 @@ import re
 from collections import defaultdict, UserDict
 from datetime import datetime
 from typing import Dict
+import json
+import os.path
 
+FILE_PATH = "contacts.json"
 
 WEEK_DAY_DICT = {
     0: "Monday",
@@ -106,6 +109,44 @@ class AddressBook(UserDict):
     def delete(self, name: Name):
         self.__delitem__(name.value)
 
+    @classmethod
+    def from_json(cls, data):
+        address_book = cls()
+        for name, record_data in data.items():
+            name_field = Name(record_data['name'])
+            record = Record(name_field)
+
+            phones = [Phone(phone) for phone in record_data['phones']]
+            for phone in phones:
+                record.add_phone(phone)
+
+            if record_data['birthday']:
+                birthday = Birthday(record_data['birthday'])
+                record.add_birthday(birthday)
+
+            address_book.add_record(record)
+
+        return address_book
+
+    def load_contacts(self, path):
+        with open(path, "r") as file:
+            data = json.load(file)
+            address_book = AddressBook.from_json(data)
+            self.data = address_book.data
+
+    def save_contacts(self, path):
+        with open(path, "w") as file:
+            def custom_serializer(obj):
+                if isinstance(obj, Record):
+                    return {
+                        'name': obj.name.value,
+                        'phones': [phone.value for phone in obj.phones],
+                        'birthday': str(obj.birthday) if obj.birthday else None
+                    }
+                return obj
+
+            json.dump(self.data, file, default=custom_serializer, indent=4)
+
     def get_birthdays_per_week(self) -> dict:
         users_dictionary_per_weekday = defaultdict(list)
         current_date = datetime.today().date()
@@ -146,6 +187,12 @@ if __name__ == '__main__':
     # Створення нової адресної книги
     book = AddressBook()
 
+    if os.path.exists(FILE_PATH):
+        book.load_contacts(FILE_PATH)
+        print(f"Contacts were loaded from '{FILE_PATH}' file")
+    else:
+        print("New address book was created")
+
     # Створення запису для John
     john_record = Record(Name("John"), Phone("0987683542"))
 
@@ -178,7 +225,7 @@ if __name__ == '__main__':
 
     print('-' * 10)
 
-    # # Пошук конкретного телефону у записі John
+    # Пошук конкретного телефону у записі John
     found_phone = john.find_phone(Phone("1112223333"))
     print(f"{john.name}: {found_phone}")
 
@@ -188,10 +235,10 @@ if __name__ == '__main__':
     found_phones = john.get_phones()
     print(found_phones)  # ['1112223333', '5555555555']
 
-    # # Видалення запису Jane
-    # # book.delete(Name("Jane"))
+    # Видалення запису Jane
+    # book.delete(Name("Jane"))
 
-    # # Видалення телефону "5555555555" із запису John
+    # Видалення телефону "5555555555" із запису John
     john_record.remove_phone(Phone("5555555555"))
 
     print('-' * 10)
@@ -202,3 +249,6 @@ if __name__ == '__main__':
 
     # Виведення днів нарождення на наступний тиждень
     print(book.get_birthdays_per_week())
+
+    # Save data into JSON file
+    book.save_contacts(FILE_PATH)
