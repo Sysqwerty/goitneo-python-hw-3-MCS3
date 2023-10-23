@@ -101,7 +101,12 @@ def change_contact(args: list[str, str, str]):
 
     if book.find(name):
         record: Record = book.find(name)
-        record.edit_phone(old_phone, new_phone)
+
+        if old_phone.value in record.get_phones():
+            record.edit_phone(old_phone, new_phone)
+        else:
+            raise KeyError
+        
         book.save_contacts(FILE_PATH)
         return f"Contact '{name}' updated successfully"
     else:

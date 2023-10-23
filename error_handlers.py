@@ -24,7 +24,7 @@ def add_contact_error(func):
         try:
             return func(args)
         except CommandError:
-            return "Please use format: add [name] [phone]"
+            return "Please use format: add {name} {phone}"
         except ValueError:
             return "Phone number doesn't match the format XXXXXXXXXX(10 digits)"
         except ContactAlreadyExistsError:
@@ -37,7 +37,7 @@ def delete_contact_error(func):
         try:
             return func(*args)
         except CommandError:
-            return "Please use format: delete [name]"
+            return "Please use format: delete {name}"
     return inner
 
 
@@ -46,9 +46,11 @@ def change_contact_error(func):
         try:
             return func(args)
         except CommandError:
-            return "Please use format: change [name] [old_phone] [new_phone]"
+            return "Please use format: change {name} {old_phone} {new_phone}"
         except ValueError:
             return "Phone number doesn't match the format XXXXXXXXXX(10 digits)"
+        except KeyError:
+            return f"Contact '{args[0].capitalize()}' has not phone number '{args[1]}'"
     return inner
 
 
@@ -57,7 +59,7 @@ def show_phones_error(func):
         try:
             return func(args)
         except CommandError:
-            return "Please use format: phone [name]"
+            return "Please use format: phone {name}"
     return inner
 
 
@@ -66,7 +68,7 @@ def add_birthday_error(func):
         try:
             return func(args)
         except CommandError:
-            return "Please use format: add-birthday [user] [DD.MM.YYYY]"
+            return "Please use format: add-birthday {user} {DD.MM.YYYY}"
         except ValueError:
             return f"'{args[1]}' doesn't match the birthday format DD.MM.YYYY"
     return inner
@@ -77,7 +79,7 @@ def show_birthday_error(func):
         try:
             return func(args)
         except CommandError:
-            return "Please use format: show-birthday [user]"
+            return "Please use format: show-birthday {user}"
         except ValueError:
-            return f"Contact have no set birthday yet"
+            return f"Contact has not set birthday yet"
     return inner

@@ -89,7 +89,7 @@ class Record:
         self.birthday = birthday
 
     def show_birthday(self):
-        return self.birthday.value
+        return self.birthday
 
     def __str__(self):
         if self.birthday:
@@ -207,6 +207,8 @@ if __name__ == '__main__':
     jane_record = Record(Name("Jane"), Phone("0876543210"))
     jane_record.add_birthday(Birthday("22.10.1984"))
     book.add_record(jane_record)
+
+    print(jane_record.show_birthday())
 
     # Створення та додавання нового запису для Simon
     simon_record = Record(Name("Simon"), Phone("0811234567"))
