@@ -1,6 +1,7 @@
 from classes import Name, Phone, Birthday, Record, AddressBook
 from error_handlers import add_contact_error, delete_contact_error, change_contact_error, show_phones_error, contact_not_found_error, add_birthday_error, show_birthday_error, CommandError, ContactAlreadyExistsError, ContactNotFoundError
 import os.path
+from colorama import Fore
 
 book: AddressBook
 FILE_PATH = "contacts.json"
@@ -27,7 +28,7 @@ def help():
     for key, value in sorted_commands.items():
         formatted_commands += f">>> {key: <40}: {value: <}\n"
 
-    return formatted_commands
+    print(Fore.MAGENTA + formatted_commands + Fore.RESET)
 
 
 def parse_input(user_input: str):
@@ -65,7 +66,8 @@ def add_contact(args: list[str, str]):
         book.add_record(record)
 
     book.save_contacts(FILE_PATH)
-    return f"Contact added successfully: {name} {phone}"
+    print(Fore.GREEN +
+          f"Contact added successfully: {name} {phone}" + Fore.RESET)
 
 
 @contact_not_found_error
@@ -82,7 +84,7 @@ def delete_contact(args):
         raise ContactNotFoundError
 
     book.save_contacts(FILE_PATH)
-    return f"Contact '{name}' deleted successfully"
+    print(Fore.GREEN + f"Contact '{name}' deleted successfully" + Fore.RESET)
 
 
 @contact_not_found_error
@@ -108,7 +110,8 @@ def change_contact(args: list[str, str, str]):
             raise KeyError
 
         book.save_contacts(FILE_PATH)
-        return f"Contact '{name}' updated successfully"
+        print(Fore.GREEN +
+              f"Contact '{name}' updated successfully" + Fore.RESET)
     else:
         raise ContactNotFoundError
 
@@ -122,7 +125,8 @@ def show_phones(args):
         raise CommandError
 
     if book.find(name):
-        return f"{name.value}: {', '.join(book.find(name).get_phones())}"
+        print(
+            Fore.GREEN + f"{name.value}: {', '.join(book.find(name).get_phones())}" + Fore.RESET)
     else:
         raise ContactNotFoundError
 
@@ -148,7 +152,7 @@ def add_birthday(args):
         raise ContactNotFoundError
 
     book.save_contacts(FILE_PATH)
-    return "Birthday added successfully"
+    print(Fore.GREEN + "Birthday added successfully" + Fore.RESET)
 
 
 @contact_not_found_error
@@ -170,7 +174,7 @@ def show_birthday(args):
     else:
         raise ValueError
 
-    return f"{name} birthday: {birthday}"
+    print(Fore.GREEN + f"{name} birthday: {birthday}" + Fore.RESET)
 
 
 def show_all():
@@ -178,9 +182,9 @@ def show_all():
         result = list()
         for record in book.data.values():
             result.append(str(record))
-        return "\n".join(result)
+        print(Fore.LIGHTBLUE_EX + "\n".join(result) + Fore.RESET)
     else:
-        return "No contacts have been added yet"
+        print(Fore.LIGHTBLUE_EX + "No contacts have been added yet" + Fore.RESET)
 
 
 def birthdays():
@@ -191,9 +195,10 @@ def birthdays():
         result += "\n".join([f"{day}: {celebrate_users}" for day,
                              celebrate_users in get_birthdays_per_week.items()])
         result += "\n" + "-" * 10
-        return result
+        print(Fore.BLUE + result + Fore.RESET)
     else:
-        return "There is no one to celebrate birthday next week"
+        print(Fore.LIGHTBLUE_EX +
+              "There is no one to celebrate birthday next week" + Fore.RESET)
 
 
 def main():
@@ -207,11 +212,12 @@ def main():
     book = AddressBook()
     if os.path.exists(FILE_PATH):
         book.load_contacts(FILE_PATH)
-        print(f"Contacts were loaded from '{FILE_PATH}' file")
+        print(Fore.BLUE +
+              f"Contacts were loaded from '{FILE_PATH}' file" + Fore.RESET)
     else:
-        print("New address book was created")
+        print(Fore.BLUE + "New address book was created" + Fore.RESET)
 
-    print("Welcome to the assistant bot!\nEnter a command or 'help' to see available commands.")
+    print(Fore.YELLOW + "Welcome to the assistant bot!\nEnter a command or 'help' to see available commands." + Fore.RESET)
 
     while True:
         user_input: str = input("Enter a command: ")
@@ -219,30 +225,30 @@ def main():
 
         match command:
             case "help":
-                print(help())
+                help()
             case "hello":
-                print("How can I help you?")
+                print(Fore.BLUE + "How can I help you?" + Fore.RESET)
             case "add":
-                print(add_contact(args))
+                add_contact(args)
             case "delete":
-                print(delete_contact(args))
+                delete_contact(args)
             case "change":
-                print(change_contact(args))
+                change_contact(args)
             case "phone":
-                print(show_phones(args))
+                show_phones(args)
             case "all":
-                print(show_all())
+                show_all()
             case "add-birthday":
-                print(add_birthday(args))
+                add_birthday(args)
             case "show-birthday":
-                print(show_birthday(args))
+                show_birthday(args)
             case "birthdays":
-                print(birthdays())
+                birthdays()
             case "close" | "exit":
-                print("Good bye!")
+                print(Fore.MAGENTA + "Good bye!" + Fore.RESET)
                 break
             case _:
-                print("Invalid command. Please try again")
+                print(Fore.RED + "Invalid command. Please try again" + Fore.RESET)
 
 
 if __name__ == "__main__":

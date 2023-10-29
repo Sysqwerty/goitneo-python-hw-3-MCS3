@@ -1,3 +1,6 @@
+from colorama import Fore
+
+
 class ContactNotFoundError(Exception):
     pass
 
@@ -15,7 +18,7 @@ def contact_not_found_error(func):
         try:
             return func(args)
         except ContactNotFoundError:
-            return f"Contact '{args[0]}' wasn't found"
+            print(Fore.RED + f"Contact '{args[0]}' wasn't found" + Fore.RESET)
     return inner
 
 
@@ -24,11 +27,14 @@ def add_contact_error(func):
         try:
             return func(args)
         except CommandError:
-            return "Please use format: add {name} {phone}"
+            print(
+                Fore.RED + "Please use format: add {name} {phone}" + Fore.RESET)
         except ValueError:
-            return "Phone number doesn't match the format XXXXXXXXXX(10 digits)"
+            print(
+                Fore.RED + "Phone number doesn't match the format XXXXXXXXXX(10 digits)" + Fore.RESET)
         except ContactAlreadyExistsError:
-            return "Contact with same phone number is already exists"
+            print(
+                Fore.RED + f"Contact with same name and phone number already exists" + Fore.RESET)
     return inner
 
 
@@ -37,7 +43,7 @@ def delete_contact_error(func):
         try:
             return func(*args)
         except CommandError:
-            return "Please use format: delete {name}"
+            print(Fore.RED + "Please use format: delete {name}" + Fore.RESET)
     return inner
 
 
@@ -46,11 +52,14 @@ def change_contact_error(func):
         try:
             return func(args)
         except CommandError:
-            return "Please use format: change {name} {old_phone} {new_phone}"
+            print(
+                Fore.RED + "Please use format: change {name} {old_phone} {new_phone}" + Fore.RESET)
         except ValueError:
-            return "Phone number doesn't match the format XXXXXXXXXX(10 digits)"
+            print(
+                Fore.RED + "Phone number doesn't match the format XXXXXXXXXX(10 digits)" + Fore.RESET)
         except KeyError:
-            return f"Contact '{args[0].capitalize()}' has not phone number '{args[1]}'"
+            print(Fore.RED + f"Contact '{args[0].capitalize()
+                                         }' has not phone number '{args[1]}'" + Fore.RESET)
     return inner
 
 
@@ -59,7 +68,7 @@ def show_phones_error(func):
         try:
             return func(args)
         except CommandError:
-            return "Please use format: phone {name}"
+            print(Fore.RED + "Please use format: phone {name}" + Fore.RESET)
     return inner
 
 
@@ -68,9 +77,11 @@ def add_birthday_error(func):
         try:
             return func(args)
         except CommandError:
-            return "Please use format: add-birthday {user} {DD.MM.YYYY}"
+            print(
+                Fore.RED + "Please use format: add-birthday {user} {DD.MM.YYYY}" + Fore.RESET)
         except ValueError:
-            return f"'{args[1]}' doesn't match the birthday format DD.MM.YYYY"
+            print(
+                Fore.RED + f"'{args[1]}' doesn't match the birthday format DD.MM.YYYY" + Fore.RESET)
     return inner
 
 
@@ -79,7 +90,8 @@ def show_birthday_error(func):
         try:
             return func(args)
         except CommandError:
-            return "Please use format: show-birthday {user}"
+            print(
+                Fore.RED + "Please use format: show-birthday {user}" + Fore.RESET)
         except ValueError:
-            return f"Contact has not set birthday yet"
+            print(Fore.RED + f"Contact has not set birthday yet" + Fore.RESET)
     return inner

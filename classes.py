@@ -1,9 +1,10 @@
 import re
-from collections import defaultdict, UserDict
 from datetime import datetime
 from typing import Dict
 import json
 import os.path
+from colorama import Fore
+from collections import defaultdict, UserDict
 
 FILE_PATH = "contacts.json"
 
