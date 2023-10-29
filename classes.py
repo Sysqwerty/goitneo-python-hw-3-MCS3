@@ -3,8 +3,8 @@ from datetime import datetime
 from typing import Dict
 import json
 import os.path
-from colorama import Fore
 from collections import defaultdict, UserDict
+
 
 FILE_PATH = "contacts.json"
 
@@ -207,7 +207,7 @@ if __name__ == '__main__':
 
     john_record.add_phone(Phone("5555555555"))
     print(john_record.get_phones())
-    john_record.add_birthday(Birthday("25.10.1984"))
+    john_record.add_birthday(Birthday("02.11.1984"))
 
     # Додавання запису John до адресної книги
     book.add_record(john_record)
