@@ -19,7 +19,7 @@ WEEK_DAY_DICT = {
 
 
 class Field:
-    def __init__(self, value):
+    def __init__(self, value: str):
         self.value = value
 
     def __str__(self):
@@ -27,12 +27,20 @@ class Field:
 
 
 class Name(Field):
-    # uses parent constructor by default
-    pass
+    def __init__(self, value: str):
+        self.__value = value.capitalize()
+
+    @property
+    def value(self):
+        return self.__value
+
+    @value.setter
+    def value(self, value: str):
+        self.__value = value.capitalize()
 
 
 class Phone(Field):
-    def __init__(self, phone):
+    def __init__(self, phone: str):
         if not re.match(r'\b\d{10}\b', phone):
             raise ValueError(
                 f"'{phone}' doesn't match the phone format XXXXXXXXXX(10 digits)")

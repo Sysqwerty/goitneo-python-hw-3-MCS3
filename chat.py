@@ -44,7 +44,7 @@ def parse_input(user_input: str):
 def add_contact(args: list[str, str]):
     try:
         name, phone = args
-        name = Name(name.capitalize())
+        name = Name(name)
     except:
         raise CommandError
 
@@ -72,7 +72,7 @@ def add_contact(args: list[str, str]):
 @delete_contact_error
 def delete_contact(args):
     try:
-        name = Name(args[0].capitalize())
+        name = Name(args[0])
     except:
         raise CommandError
 
@@ -90,7 +90,7 @@ def delete_contact(args):
 def change_contact(args: list[str, str, str]):
     try:
         name, old_phone, new_phone = args
-        name = Name(name.capitalize())
+        name = Name(name)
     except:
         raise CommandError
     try:
@@ -106,7 +106,7 @@ def change_contact(args: list[str, str, str]):
             record.edit_phone(old_phone, new_phone)
         else:
             raise KeyError
-        
+
         book.save_contacts(FILE_PATH)
         return f"Contact '{name}' updated successfully"
     else:
@@ -117,7 +117,7 @@ def change_contact(args: list[str, str, str]):
 @show_phones_error
 def show_phones(args):
     try:
-        name = Name(args[0].capitalize())
+        name = Name(args[0])
     except:
         raise CommandError
 
@@ -132,7 +132,7 @@ def show_phones(args):
 def add_birthday(args):
     try:
         name, birthday = args
-        name = Name(name.capitalize())
+        name = Name(name)
     except:
         raise CommandError
 
@@ -156,7 +156,7 @@ def add_birthday(args):
 def show_birthday(args):
     try:
         name = args[0]
-        name = Name(name.capitalize())
+        name = Name(name)
     except:
         raise CommandError
 
@@ -198,7 +198,7 @@ def birthdays():
 
 def main():
     """
-    Assistanse bot helps to collect and manage user contacts.
+    Assistant bot helps to collect and manage user contacts.
 
     To see available commands enter 'help' command
     """
