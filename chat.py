@@ -28,6 +28,10 @@ commands: dict = {
 
 
 def help():
+    """
+    Prints out available commands
+    prints list of bot commands
+    """
     sorted_commands = dict(sorted(commands.items(), key=lambda item: item[0]))
     formatted_commands = ""
 
@@ -38,6 +42,11 @@ def help():
 
 
 def parse_input(user_input: str):
+    """
+    Parse input command
+    Prints available commands in case of empty input
+    @return - command and arguments
+    """
     try:
         cmd, *args = user_input.split()
         cmd = cmd.strip().lower()
@@ -49,6 +58,11 @@ def parse_input(user_input: str):
 
 @add_contact_error
 def add_contact(args: list[str, str]):
+    """
+    adds a new contact with phone number
+    or adds a new phone number to exist contact
+    prints command result
+    """
     try:
         name, phone = args
         name = Name(name)
@@ -79,6 +93,10 @@ def add_contact(args: list[str, str]):
 @contact_not_found_error
 @delete_contact_error
 def delete_contact(args):
+    """
+    delete exist contact
+    prints command result
+    """
     try:
         name = Name(args[0])
     except:
@@ -96,6 +114,10 @@ def delete_contact(args):
 @contact_not_found_error
 @change_contact_error
 def change_contact(args: list[str, str, str]):
+    """
+    change exist contact phone number on new one
+    prints command result
+    """
     try:
         name, old_phone, new_phone = args
         name = Name(name)
@@ -125,6 +147,10 @@ def change_contact(args: list[str, str, str]):
 @contact_not_found_error
 @show_phones_error
 def show_phones(args):
+    """
+    show exist contact phone numbers
+    prints command result
+    """
     try:
         name = Name(args[0])
     except:
@@ -140,6 +166,10 @@ def show_phones(args):
 @contact_not_found_error
 @add_birthday_error
 def add_birthday(args):
+    """
+    add birthday to exist contact
+    prints command result
+    """
     try:
         name, birthday = args
         name = Name(name)
@@ -164,6 +194,10 @@ def add_birthday(args):
 @contact_not_found_error
 @show_birthday_error
 def show_birthday(args):
+    """
+    show birthday of exist user
+    prints command result
+    """
     try:
         name = args[0]
         name = Name(name)
@@ -184,6 +218,10 @@ def show_birthday(args):
 
 
 def show_all():
+    """
+    show all exist contacts
+    prints command result
+    """
     if book.data:
         result = list()
         for record in book.data.values():
